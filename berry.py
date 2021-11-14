@@ -2,6 +2,7 @@ import os, shutil
 import concurrent.futures
 import django
 import sys
+import typer
 
 
 #list object to hold the names of all the modules to be included in BerryEnv
@@ -31,20 +32,30 @@ for module in modules:
     except Exception as err:
         print(err)    
 
-
+ 
 
 dest = os.path.join(os.getcwd(), os.path.basename(path_to_module))
 
 
 
-def copy_module(path):
-    print(path)
-    try:
-        shutil.copytree(path, dest, copy_function= shutil.copy)
-        return "Finished Recursive Copy!"
-    except NotADirectoryError as err:
-        return f"program ran into this problem ============>>>>{err}"
-    
+def copy_module(pathh):
+    path=os.path.join(os.path.dirname(pathh), os.path.basename(pathh))
+
+    if os.path.isdir(path):
+        try:
+            shutil.copytree(path, dest, copy_function= shutil.copy2)
+            return "Finished Recursive Copy!"
+        except NotADirectoryError as err:
+            return f"program ran into this problem ============>>>>{err}"
+
+    elif os.path.isfile(path):
+        try:
+            shutil.copyfile(path, dest)
+            return "Finished Recursive Copy!"
+        except NotADirectoryError as err:
+            return f"program ran into this problem ============>>>>{err}"
+
+    return "Operation not recognised!"
 
 def threader():
     with concurrent.futures.ThreadPoolExecutor() as executor:
